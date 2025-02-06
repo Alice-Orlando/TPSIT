@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bottoni con Data e Ora</title>
+    <style>
+        .button-container {
+            margin: 20px;
+        }
+        .date-time-display {
+            margin-top: 20px;
+        }
+        .time-display {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="button-container">
+        <button onclick="recordTime(1)">Bottone 1</button>
+        <button onclick="recordTime(2)">Bottone 2</button>
+        <button onclick="recordTime(3)">Bottone 3</button>
+        <button onclick="recordTime(4)">Bottone 4</button>
+    </div>
+
+    <div class="date-time-display" id="date-time"></div>
+    <div class="time-display" id="time-display"></div>
+
+    <script>
+        let firstClickTime = null;
+        let timesArray = [];
+
+        function recordTime(buttonNumber) {
+            const now = performance.now(); // Utilizzo della funzione performance per misurare il tempo in millisecondi
+            const dateTimeString = new Date().toLocaleString('it-IT');
+            document.getElementById("date-time").innerHTML = `Bottone ${buttonNumber} premuto! Data e Ora: ${dateTimeString}`;
+
+            if (firstClickTime === null) {
+                // Memorizziamo il tempo del primo click
+                firstClickTime = now;
+                timesArray = []; // Resetta l'array per eventuali nuovi tentativi
+            } else {
+                // Calcoliamo il tempo dal primo click
+                const elapsedTime = now - firstClickTime;
+                const seconds = Math.floor(elapsedTime / 1000);
+                const milliseconds = Math.floor(elapsedTime % 1000);
+                const tenths = Math.floor(elapsedTime / 100);
+
+                // Aggiungiamo il tempo all'array
+                timesArray.push({ seconds, tenths, milliseconds });
+                document.getElementById("time-display").innerHTML = `
+                    Tempi trascorsi tra il primo click e i successivi:
+                    <pre>${JSON.stringify(timesArray, null, 2)}</pre>
+                `;
+            }
+        }
+    </script>
+
+</body>
+</html>
