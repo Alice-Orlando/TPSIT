@@ -47,6 +47,64 @@
             transform: scale(1.05);
         }
     </style>
+    <script>
+        function illuminati(id) {
+            let btn = document.getElementById("" + id);
+            let originalColor = window.getComputedStyle(btn).backgroundColor;
+            btn.style.boxShadow = `0 0 15px 5px ${originalColor}`;
+            btn.style.transform = "scale(1.05)"; // Leggero ingrandimento
+        }
+
+        function spegniti(id) {
+            let btn = document.getElementById("" + id);
+            btn.style.boxShadow = "";
+            btn.style.transform = "scale(1)"; // Torna alla dimensione originale
+        }
+
+        function riaccendersi() {
+            giocatore = new Array();
+                let i = 0; //inizializzo il contatore
+                while (i < sequenza.length ){ //controllo che il contatore è minore della lunghezza della sequenza
+                    // Passa solo il riferimento alla funzione, senza chiamarla subito
+                    setTimeout(illuminati, 1000*i, sequenza[i]);// moltiplichiamo per i per creare un ritardo progressivo
+                    setTimeout(spegniti, 1000*i + 1000, sequenza[i]); // accende per 1 secondo
+                    setTimeout(i++, 2000); // Incrementa il contatore
+                }
+                //aggiunge un livello agli altri dopo il ciclo
+                let id = Math.floor(Math.random() * 9); 
+                sequenza.push(id); 
+                setTimeout(illuminati, 1000 * i, id);
+                setTimeout(spegniti, 1000 * i + 1000, id);
+        }
+
+        function start() {
+            sequenza = new Array();
+            giocatore = new Array();
+
+            let i = 0; //inizializzo il contatore
+            let id = Math.floor(Math.random() * 9); 
+            sequenza.push(id); //aggiunge alla sequenza il bottone che si illumina
+
+            // Passa solo il riferimento alla funzione, senza chiamarla subito
+            setTimeout(illuminati, 1000 * i, id);// moltiplichiamo per i per creare un ritardo progressivo
+            setTimeout(spegniti, 1000 * i + 1000, id); // accende per 1 secondo
+        }
+        
+        function salva(id) { 
+            giocatore.push(id);
+            if(sequenza.toString() === giocatore.toString()){ //se la sequenza è uguale sia nella lunghezza che nel contenuto
+                setTimeout(riaccendersi, 1000) //si riaccende
+                document.getElementById("pippo").innerHTML = "punteggio: " + giocatore.length;
+            }
+            else{ 
+                if(sequenza.length == giocatore.length){ //se la lunghezza della sequenza è uguale alla lunghezza del giocatore
+                    alert("Hai perso!");
+                }
+            }
+        }
+        
+
+    </script>
 </head>
 <body>
     <nav class="navbar bg-dark">
