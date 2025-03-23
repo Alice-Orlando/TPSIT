@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipolazione Stringhe</title>
+    <script>
+        function calcolaLunghezza() {
+            let str1 = document.getElementById("string1").value;
+            let str2 = document.getElementById("string2").value;
+            
+            document.getElementById("lunghezza1").innerText = "Lunghezza Stringa 1: " + str1.length;
+            document.getElementById("lunghezza2").innerText = "Lunghezza Stringa 2: " + str2.length;
+        }
+
+        function invertiStringa(str) {
+            return str.split("").reverse().join("");
+        }
+
+        function mostraInvertite() {
+            let str1 = document.getElementById("string1").value;
+            let str2 = document.getElementById("string2").value;
+            
+            document.getElementById("invertita1").innerText = "Stringa 1 Invertita: " + invertiStringa(str1);
+            document.getElementById("invertita2").innerText = "Stringa 2 Invertita: " + invertiStringa(str2);
+        }
+
+        function unisciStringhe() {
+            let str1 = document.getElementById("string1").value;
+            let str2 = document.getElementById("string2").value;
+            document.getElementById("unita").innerText = "Stringhe Unite: " + str1 + str2;
+        }
+
+        function sommaLunghezze() {
+            let str1 = document.getElementById("string1").value;
+            let str2 = document.getElementById("string2").value;
+            let lunghezzaTotale = str1.length + str2.length;
+            let messaggio = "Somma delle lunghezze: " + lunghezzaTotale;
+            
+            if (str2.length > 20) {
+                messaggio += " - ATTENZIONE: Stringa 2 troppo lunga!";
+            }
+            
+            document.getElementById("somma").innerText = messaggio;
+        }
+    </script>
+</head>
+<body>
+    <h2>Manipolazione Stringhe</h2>
+    <label for="string1">Stringa 1:</label>
+    <input type="text" id="string1">
+    <br>
+    <label for="string2">Stringa 2:</label>
+    <input type="text" id="string2">
+    <br><br>
+    <button onclick="calcolaLunghezza()">Calcola Lunghezza</button>
+    <button onclick="mostraInvertite()">Inverti Stringhe</button>
+    <button onclick="unisciStringhe()">Unisci Stringhe</button>
+    <button onclick="sommaLunghezze()">Somma Lunghezze</button>
+    
+    <h3>Risultati:</h3>
+    <p id="lunghezza1"></p>
+    <p id="lunghezza2"></p>
+    <p id="invertita1"></p>
+    <p id="invertita2"></p>
+    <p id="unita"></p>
+    <p id="somma"></p>
+</body>
+</html>
