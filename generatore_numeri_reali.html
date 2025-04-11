@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numeri Casuali</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #output {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generatore di Numeri Casuali</h1>
+    <label for="min">Min:</label>
+    <input type="number" id="min" value="1">
+    <label for="max">Max:</label>
+    <input type="number" id="max" value="100">
+    <button onclick="generaNumeri()">Genera</button>
+    <div id="stampaNumeri"></div>
+    <div id="media">MEDIA DEI PRIMI 50: </div>
+   
+    <script>
+        function generaNumeri() {
+            let numeri_casuali = new Array();
+            const min = parseInt(document.getElementById('min').value, 10);
+            const max = parseInt(document.getElementById('max').value, 10);
+            if (isNaN(min) || isNaN(max) || min >= max) {
+                alert("Inserisci un intervallo valido.");
+                return;
+            }
+           
+            let numeri = 0; let somma = 0;
+            for (let i = 0; i < 10000; i++) {
+                numeri = (Math.random() * (max - min + 1)) + min;
+                somma += numeri; // somma dei numeri randomici
+                numeri_casuali.push(numeri);
+                document.getElementById('stampaNumeri').textContent += numeri + ""; // STAMPA I CAZZO DI NUMERI
+                if (i % 50 === 49){ // se è il 50 numero devo fare la media CINQUANTESIMO NUMERO
+                    const media = somma / 50; //somma diviso i primi 50 numeri
+                    document.getElementById('stampaNumeri').textContent += "\n";
+                    somma = 0; // devo rinizializzare la somma
+                    document.getElementById('media').textContent += media + "\n" 
+                }
+            }
+            
+
+        }
+    </script>
+</body>
+</html>
