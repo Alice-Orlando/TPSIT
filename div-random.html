@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Div Casuali</title>
   <style>
-    body {
+    body { 
       margin: 0;
       overflow: hidden;
     }
@@ -52,27 +52,27 @@
 
   <script>
     
-    function randomPosition(div) {
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      const randomX = Math.random() * (windowWidth - 100);
-      const randomY = Math.random() * (windowHeight - 100);
-      div.style.left = `${randomX}px`;
-      div.style.top = `${randomY}px`;
+    function PosizioneRandomica(div) {
+      const larghezza = window.innerWidth; //const è la dichiarazione della variabile che non può essere modificata
+      const altezza = window.innerHeight; 
+      const randomX = Math.random() * (larghezza - 100); //dichiara la variabile per l'asse x, prende un numero casuale e lo moltiplica per la larghezza dello schermo meno la larghezza del quadrato
+      const randomY = Math.random() * (altezza - 100);
+      div.style.left = randomX + "px"; //imposta all'interno del body la partenza del quadrato da sinistra
+      div.style.top = randomY + "px"; //imposta all'interno del body la partenza del quadrato dall'alto
     }
 
     
-    function checkOverlap() {
+    function ControlloSovrapposizione() {
       const div1 = document.getElementById("div1");
       const div2 = document.getElementById("div2");
 
-      const rect1 = div1.getBoundingClientRect();
-      const rect2 = div2.getBoundingClientRect();
+      const quadrato1 = div1.getBoundingClientRect();
+      const quadrato2 = div2.getBoundingClientRect();
 
       
-      const overlap = !(rect1.right < rect2.left || rect1.left > rect2.right || rect1.bottom < rect2.top || rect1.top > rect2.bottom);
+      const sovrapposizione = !(quadrato1.right < quadrato2.left || quadrato1.left > quadrato2.right || quadrato1.bottom < quadrato2.top || quadrato1.top > quadrato2.bottom); //se una è falsa viene converita in vera pk i quadrati si sovrappongono
 
-      if (overlap) {
+      if (sovrapposizione) {
         div1.style.backgroundColor = "red";
         div2.style.backgroundColor = "red";
       } else {
@@ -82,18 +82,18 @@
     }
 
     
-    function moveDivs() {
+    function muovereDiv() {
       const div1 = document.getElementById("div1");
       const div2 = document.getElementById("div2");
 
-      randomPosition(div1);
-      randomPosition(div2);
+      PosizioneRandomica(div1);
+      PosizioneRandomica(div2);
 
-      checkOverlap();
+      ControlloSovrapposizione();
     }
 
     
-    setInterval(moveDivs, 1000);
+    setInterval(muovereDiv, 1000);
 
   </script>
 
