@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Quadrato che gira</title>
+  <style>
+    #contenitore {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 30px auto;
+    }
+
+    #quadrato {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body onload="muoviQuadrato()">
+
+  <!-- Contenitore del percorso -->
+  <div id="contenitore">
+    <!-- Il quadrato che si muove -->
+    <div id="quadrato"></div>
+  </div>
+
+  <script>
+    // Riferimento al quadrato rosso
+    const quadrato = document.getElementById("quadrato");
+
+    // Lati del quadrato
+    const maxX = 250; // destra (contenitore - dimensione quadrato)
+    const maxY = 250; // sotto
+    let x = 0; // posizione orizzontale
+    let y = 0; // posizione verticale
+    let direzione = "destra"; // direzione iniziale
+
+
+        function muoviQuadrato() {
+            // Ogni 50 millisecondi esegui questa funzione
+            setInterval(function() {
+                
+                // Controlla in quale direzione si sta muovendo il quadrato
+                if (direzione == "destra") {
+                x = x + 5; // Spostalo 5 pixel a destra
+                
+                // Se ha raggiunto il limite destro del contenitore
+                if (x >= maxX) {
+                    x = maxX;         // Assicurati che non superi il limite
+                    direzione = "giu"; // Cambia direzione verso il basso
+                }
+                }
+
+                else if (direzione == "giu") {
+                y = y + 5; // Spostalo 5 pixel verso il basso
+
+                // Se ha raggiunto il fondo del contenitore
+                if (y >= maxY) {
+                    y = maxY;
+                    direzione = "sinistra"; // Cambia direzione verso sinistra
+                }
+                }
+
+                else if (direzione == "sinistra") {
+                x = x - 5; // Spostalo 5 pixel a sinistra
+
+                // Se è tornato al bordo sinistro
+                if (x <= 0) {
+                    x = 0;
+                    direzione = "su"; // Cambia direzione verso l'alto
+                }
+                }
+
+                else if (direzione == "su") {
+                y = y - 5; // Spostalo 5 pixel verso l'alto
+
+                // Se è tornato in cima
+                if (y <= 0) {
+                    y = 0;
+                    direzione = "destra"; // Ricomincia il giro verso destra
+                }
+                }
+
+                // Infine, aggiorna la posizione del quadrato sulla pagina
+                quadrato.style.left = x + "px";
+                quadrato.style.top = y + "px";
+
+            }, 50); // Tempo di attesa tra un movimento e il successivo (in millisecondi)
+            }
+
+  </script>
+
+</body>
+</html>
