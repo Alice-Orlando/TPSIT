@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Color Match Challenge</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .box {
+      width: 200px;
+      padding: 20px;
+      background-color: white;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      margin: 15px auto;
+      cursor: pointer;
+      transition: transform 0.2s;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      max-width: 600px;
+    }
+
+  </style>
+</head>
+<body class="text-center">
+
+  <div class="container mt-5">
+    <h1 class="mb-4">🎨 Color Match Challenge</h1>
+
+    <div class="mb-3">
+      <label for="difficulty" class="form-label">Scegli la difficoltà:</label> 
+      <select id="difficulty" class="form-select w-50 mx-auto">
+        <option value="easy">Easy - 0:40</option>
+        <option value="medium">Medium - 0:30</option>
+        <option value="hard">Hard - 0:20</option>
+      </select>
+    </div>
+
+    <button id="startBtn" class="btn btn-primary mb-4">Inizia il gioco</button>
+
+    <div id="gameInfo" class="d-none">
+      <p>⏱️ Tempo rimasto: <span id="timer">--:--</span></p>
+      <p>🎯 Punteggio: <span id="score">0</span></p>
+    </div>
+
+    <div id="gameArea" class="mt-4"></div>
+
+    <div id="endScreen" class="d-none mt-4">
+      <h2>⏳ Tempo scaduto!</h2>
+      <p>Punteggio finale: <span id="finalScore"></span></p>
+      <button class="btn btn-secondary" onclick="location.reload()">Rigioca</button>
+    </div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn"); //start btn, nome della costante, prende l'elemento dal documento "startbtn" ovvero il bottone start(oggetto)
+    const difficultySelect = document.getElementById("difficulty");
+    const timerDisplay = document.getElementById("timer");
+    const scoreDisplay = document.getElementById("score");
+    const gameArea = document.getElementById("gameArea");
+    const gameInfo = document.getElementById("gameInfo");
+    const endScreen = document.getElementById("endScreen");
+    const finalScore = document.getElementById("finalScore");
+
+    let score = 0; //variabile volatile 
+    let timeLeft = 0;
+    let gameInterval; //variabile che instanzia un intervallo al Timer
+    let boxCount = 2;
+    let gameStarted = false; //False perchè il gioco non è ancora iniziato
+
+    const colors = ["Rosso", "Blu", "Verde", "Giallo", "Viola", "Arancione", "Nero"];
+    const colorHex = {
+      Rosso: "red",
+      Blu: "blue",
+      Verde: "green",
+      Giallo: "#f7de4f",
+      Viola: "purple",
+      Arancione: "orange",
+      Nero: "black"
+    };
+
+    startBtn.addEventListener("click", startGame); //al bottone start viene aggiunto un ascoltatore quando viene cliccato lancia la funzione start game
+
+    function startGame() {
+      if (gameStarted) return; // prevenire avvio multiple volte
+
+      gameStarted = true; //il gioco inizia
+      const difficulty = difficultySelect.value; //verificha cosa hai scelto di difficoltà
+
+      // Impostazioni di tempo e numero di caselle in base alla difficoltà
+      if (difficulty === "easy") {
+        timeLeft = 40;
+        boxCount = 2;
+      } else if (difficulty === "medium") {
+        timeLeft = 30;
+        boxCount = 3;
+      } else {
+        timeLeft = 20;
+        boxCount = 3;
+      }
+
+      // Reset score e timer
+      score = 0; 
+      combo = 0; 
+      scoreDisplay.textContent = score; //mostra il punteggio nel display
+      timerDisplay.textContent = formatTime(timeLeft);
+
+      // Mostra informazioni di gioco
+      gameInfo.classList.remove("d-none"); 
+      startBtn.classList.add("d-none"); //nasconde il pulsante start
+      difficultySelect.disabled = true; //è disabilitato o non modificabile
+      endScreen.classList.add("d-none"); 
+      gameArea.innerHTML = ""; //pulisce area di gioco 
+
+      generateBoxes();
+      gameInterval = setInterval(updateTimer, 1000); //toglie un secondo al timer 
+    }
+
+    function updateTimer() {
+      timeLeft--; // Riduce il tempo di 1 secondo
+      timerDisplay.textContent = formatTime(timeLeft);
+      if (timeLeft <= 0) {
+        clearInterval(gameInterval); //ferma il timer
+        endGame();
+      }
+    }
+
+    function generateBoxes() {
+      gameArea.innerHTML = "";
+
+      const boxCorretta = Math.floor(Math.random() * boxCount); // Sceglie un indice casuale per la casella corretta
+      const ParolaCorretta = colors[Math.floor(Math.random() * colors.length)];
+      const ColoreCorretto = colorHex[ParolaCorretta];
+
+      for (let i = 0; i < boxCount; i++) { // Cicla da 0 a boxCount-1 per creare tutte le caselle (box)
+        const box = document.createElement("div");
+        box.className = "box";
+
+        let word, color;
+
+        if (i === boxCorretta) { // Se l'indice corrente è quello della casella corretta
+          word = ParolaCorretta;
+          color = ColoreCorretto;
+          box.dataset.correct = "true"; // Imposta un attributo personalizzato per indicare che questa casella è quella corretta
+        } else {
+          do { 
+            word = colors[Math.floor(Math.random() * colors.length)];
+          } while (word === ParolaCorretta);  // Ripete finché la parola scelta è diversa dalla parola corretta
+
+          // Colore sbagliato ma non uguale al significato della parola
+          do {
+            color = colorHex[colors[Math.floor(Math.random() * colors.length)]];
+          } while (color === colorHex[word]); // Ripete finché il colore scelto non corrisponde al significato della parola
+          
+          box.dataset.correct = "false";
+        }
+
+        box.textContent = word;
+        box.style.color = color;
+        box.addEventListener("click", () => {
+          // Controlla la difficoltà selezionata dall'utente
+          if (difficultySelect.value === "easy") {
+            if (box.dataset.correct === "true") {
+              score += 5; 
+              combo += 1;
+              if (combo >= 3) {
+                // Se ci sono almeno 3 risposte corrette consecutive, bonus combo
+                score += (5 * combo);
+              }
+            } else {
+              score -= 2;
+              combo = 0;
+            }
+          } else if (difficultySelect.value === "medium") {
+            if (box.dataset.correct === "true") {
+              score += 5;
+              combo += 1;
+              if (combo >= 3) {
+                score += (5 * combo);
+              }
+            } else {
+              score -= 3;
+              combo = 0;
+            }
+          } else { // Se la difficoltà è "hard"
+            if (box.dataset.correct === "true") {
+              score += 5;
+              combo += 1;
+              if (combo >= 3) {
+                score += (5 * combo);
+              }
+            } else {
+              score -= 5;
+              combo = 0;
+            }
+          }
+
+  scoreDisplay.textContent = score;
+  generateBoxes(); // Avvia un nuovo round
+});
+
+        gameArea.appendChild(box);
+      }
+    }
+
+    function endGame() {
+      gameInfo.classList.add("d-none"); // per game info aggiunge una lista di classi
+      gameArea.innerHTML = "";
+      endScreen.classList.remove("d-none"); 
+      
+      
+      console.log("Punteggio finale: " + score);
+
+      finalScore.textContent = score; // Mostra il punteggio finale
+      gameStarted = false;
+      clearInterval(gameInterval); // Ferma il timer
+    }
+
+
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = seconds % 60;
+      return `${min}:${sec < 10 ? "0" : ""}${sec}`; //se i secondi sono minori di 10 aggiunge uno zero perchè js interpreta la variabile sec come un numero senza aggiungere zero superfluo
+    }
+
+  </script>
+</body>
+</html>
