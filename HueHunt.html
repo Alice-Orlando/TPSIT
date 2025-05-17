@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>Color Spot Challenge</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #f0f0f0;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    #controls {
+      margin-top: 20px;
+    }
+    #gameArea {
+      position: relative;
+      width: 100vw;
+      height: 80vh;
+      border: 2px solid #ccc;
+      margin: 20px auto;
+      overflow: hidden;
+      background: white;
+    }
+    .circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 2px solid #333;
+    }
+    .circle:hover {
+      transform: scale(1.2);
+    }
+    #results {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎨Hue Hunt</h1>
+  <div id="controls">
+    <label for="targetColor">Scegli un colore bersaglio:</label>
+    <select id="targetColor">
+      <option value="red">Rosso</option>
+      <option value="blue">Blu</option>
+      <option value="green">Verde</option>
+      <option value="yellow">Giallo</option>
+      <option value="purple">Viola</option>
+    </select>
+    <button onclick="startGame()">Inizia Gioco</button>
+  </div>
+
+  <div id="gameArea"></div>
+  <div id="results"></div>
+
+  <script>
+    const colors = ["red", "blue", "green", "yellow", "purple"];
+    let targetColor = "";
+    let reactionTimes = [];
+    let round = 0;
+    const maxRounds = 10;
+    let startTime = 0;
+    let interval;
+
+    function startGame() {
+      clearInterval(interval); // evita sovrapposizione se clicchi più volte
+      reactionTimes = [];
+      round = 0;
+      targetColor = document.getElementById("targetColor").value;
+      document.getElementById("results").innerHTML = "";
+      nextRound();
+      interval = setInterval(nextRound, 3000); // ogni 3 secondi
+    }
+
+    function nextRound() {
+      if (round >= maxRounds) {
+        clearInterval(interval);
+        showResults();
+        return;
+      }
+
+      const gameArea = document.getElementById("gameArea");
+      gameArea.innerHTML = "";
+      startTime = Date.now();
+
+      const numCircles = 5;
+      const otherColors = colors.filter(c => c !== targetColor);
+
+      // Mescola i colori alternativi
+      const shuffledOtherColors = otherColors.sort(() => 0.5 - Math.random());
+      const chosenColors = [targetColor, ...shuffledOtherColors.slice(0, numCircles - 1)];
+
+      // Mescola l'array finale per rendere casuale la posizione del bersaglio
+      const finalColors = chosenColors.sort(() => 0.5 - Math.random());
+
+      const area = gameArea.getBoundingClientRect();
+
+      for (let i = 0; i < numCircles; i++) {
+        const circle = document.createElement("div");
+        circle.className = "circle";
+        const color = finalColors[i];
+        circle.style.backgroundColor = color;
+        circle.dataset.color = color;
+
+        const x = Math.random() * (area.width - 70);
+        const y = Math.random() * (area.height - 70);
+        circle.style.left = `${x}px`;
+        circle.style.top = `${y}px`;
+
+        circle.onclick = handleClick;
+        gameArea.appendChild(circle);
+      }
+
+      round++;
+    }
+
+    function handleClick(event) {
+      const clickedColor = event.target.dataset.color;
+      if (clickedColor === targetColor) {
+        const reactionTime = Date.now() - startTime;
+        reactionTimes.push(reactionTime);
+        document.getElementById("gameArea").innerHTML = `<p><strong>👍 Ottimo! ${reactionTime} ms</strong></p>`;
+      } else {
+        document.getElementById("gameArea").innerHTML = "<p>❌ Colore sbagliato!</p>";
+      }
+    }
+
+    function showResults() {
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "<h2>Risultati finali</h2>";
+      if (reactionTimes.length === 0) {
+        resultsDiv.innerHTML += "<p>Nessun clic corretto registrato.</p>";
+        return;
+      }
+      reactionTimes.forEach((time, index) => {
+        resultsDiv.innerHTML += `<p>Round ${index + 1}: ${time} ms</p>`;
+      });
+      const avg = Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length);
+      resultsDiv.innerHTML += `<h3>⏱️ Tempo medio di reazione: ${avg} ms</h3>`;
+    }
+  </script>
+
+</body>
+</html>
